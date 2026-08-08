@@ -63,15 +63,12 @@ def get_coordinates(location_name):
     except: pass
     return None, None
 
-# NEW FIX: Auto-Crop Image function (Prevents stretching on Cloud)
-def render_image(image_name, caption_text="", aspect_ratio=(16, 9)):
+# 100% FIXED: ONE SINGLE STANDARD SIZE FOR EVERY IMAGE (Based on BURNING.png)
+def render_image(image_name, caption_text=""):
     if os.path.exists(image_name):
         img = Image.open(image_name)
-        # Calculates the perfect size without stretching
-        target_w = 800
-        target_h = int(target_w * (aspect_ratio[1] / aspect_ratio[0]))
-        # Center crop to fit perfectly
-        img_cropped = ImageOps.fit(img, (target_w, target_h), Image.Resampling.LANCZOS)
+        # 800x800 Perfect Square for ALL images
+        img_cropped = ImageOps.fit(img, (800, 800), Image.Resampling.LANCZOS)
         st.image(img_cropped, caption=caption_text, use_container_width=True)
     else:
         st.error(f"⚠️ Missing: '{image_name}'")
@@ -99,8 +96,11 @@ if page == "🏠 1. Home / Overview":
     st.markdown('<div class="title-container"><span class="emoji-icon">🌾</span> <span class="gradient-text">Parali-Pro</span></div>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Next-Generation Crop Residue & Energy Optimization Platform</p>', unsafe_allow_html=True)
     
-    # Wide Banner aspect ratio (21:9)
-    render_image("PARALI.png", aspect_ratio=(21, 9))
+    # Put PARALI.png in columns so its physical size matches BURNING.png perfectly
+    col_main1, col_main2 = st.columns(2)
+    with col_main1:
+        render_image("PARALI.png")
+    
     st.divider()
     
     home_tabs = st.tabs(["🔥 Problem Statement", "💡 Strategic Solution", "🎯 Core Pillars"])
@@ -108,21 +108,22 @@ if page == "🏠 1. Home / Overview":
     with home_tabs[0]:
         st.write("### The Ecological & Economic Crisis")
         st.write("Every post-harvest season, the narrow window for field preparation triggers massive stubble burning across North India. This conventional practice annihilates topsoil nutrients and creates severe atmospheric pollution (PM2.5/PM10), resulting in a public health emergency and economic loss.")
-        render_image("CRISIS.png", aspect_ratio=(21, 9))
+        col_crisis1, col_crisis2 = st.columns(2)
+        with col_crisis1:
+            render_image("CRISIS.png")
 
     with home_tabs[1]:
         st.write("### The Data-Driven Intervention")
         st.write("We architect a bridge between agriculture and the energy sector. Utilizing spatial data and production metrics, Parali-Pro routes crop residue directly to operational Biomass, Paper, and Bio-CNG plants, translating waste into sustainable capital.")
         col1, col2 = st.columns(2)
-        with col1: render_image("FARMER.png", "Digital Empowerment of Farmers", aspect_ratio=(4, 3))
-        with col2: render_image("TACKLING.png", "Technological Waste Management", aspect_ratio=(4, 3))
+        with col1: render_image("FARMER.png", "Digital Empowerment of Farmers")
+        with col2: render_image("TACKLING.png", "Technological Waste Management")
 
     with home_tabs[2]:
         st.write("### Platform Objectives")
         col_obj1, col_obj2 = st.columns(2)
-        # Square aspect ratio (1:1) so they look perfectly equal and big
-        with col_obj1: render_image("BURNING.png", "Eradicate Field Fires", aspect_ratio=(1, 1))
-        with col_obj2: render_image("MONEY.png", "Generate Rural Wealth", aspect_ratio=(1, 1))
+        with col_obj1: render_image("BURNING.png", "Eradicate Field Fires")
+        with col_obj2: render_image("MONEY.png", "Generate Rural Wealth")
 
 # ==========================================
 # PAGE 2: AI DECISION ENGINE
@@ -244,3 +245,4 @@ elif page == "📈 5. Impact Projections":
     col1.metric("Avg Peak AQI", "110", "▼ 75% Reduction", delta_color="normal")
     col2.metric("Soil Carbon Recovery", "18%", "▲ Sustained", delta_color="normal")
     col3.metric("Rural Economy Boost", "₹2,150 Cr", "▲ Generated", delta_color="normal")
+
