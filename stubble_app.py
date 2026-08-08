@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import folium
@@ -7,9 +6,9 @@ from streamlit_folium import st_folium
 from geopy.geocoders import Nominatim
 import plotly.express as px
 import plotly.graph_objects as go
-from PIL import Image, ImageOps
 import os
 import time
+import base64
 
 # ==========================================
 # 1. PAGE CONFIGURATION & ADVANCED CSS
@@ -63,15 +62,23 @@ def get_coordinates(location_name):
     except: pass
     return None, None
 
-# 100% FIXED: ONE SINGLE STANDARD SIZE FOR EVERY IMAGE (Based on BURNING.png)
+# 100% FIXED: EXACT SAME SIZE (450x450) & STRICTLY CENTER ALIGNED USING HTML/CSS
 def render_image(image_name, caption_text=""):
     if os.path.exists(image_name):
-        img = Image.open(image_name)
-        # 800x800 Perfect Square for ALL images
-        img_cropped = ImageOps.fit(img, (800, 800), Image.Resampling.LANCZOS)
-        st.image(img_cropped, caption=caption_text, use_container_width=True)
+        with open(image_name, "rb") as f:
+            data = base64.b64encode(f.read()).decode("utf-8")
+        
+        # HTML + CSS Flexbox forces absolute Center Alignment and strict Square shape
+        html_code = f"""
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; margin-bottom: 20px;">
+            <img src="data:image/png;base64,{data}" 
+                 style="width: 450px; height: 450px; object-fit: cover; border-radius: 15px; border: 2px solid #FFD700; box-shadow: 0px 8px 20px rgba(0,0,0,0.6);">
+            <div style="color: #00E5FF; font-size: 20px; font-weight: bold; margin-top: 15px; text-align: center;">{caption_text}</div>
+        </div>
+        """
+        st.markdown(html_code, unsafe_allow_html=True)
     else:
-        st.error(f"⚠️ Missing: '{image_name}'")
+        st.error(f"⚠️ Missing Image: '{image_name}'")
 
 # ==========================================
 # 3. SIDEBAR NAVIGATION
@@ -96,10 +103,10 @@ if page == "🏠 1. Home / Overview":
     st.markdown('<div class="title-container"><span class="emoji-icon">🌾</span> <span class="gradient-text">Parali-Pro</span></div>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Next-Generation Crop Residue & Energy Optimization Platform</p>', unsafe_allow_html=True)
     
-    # Put PARALI.png in columns so its physical size matches BURNING.png perfectly
-    col_main1, col_main2 = st.columns(2)
-    with col_main1:
-        render_image("PARALI.png")
+    # Using columns to visually balance the center-aligned image
+    col_dummy1, col_center, col_dummy2 = st.columns([1, 2, 1])
+    with col_center:
+        render_image("PARALI.png", "Main Dashboard Interface")
     
     st.divider()
     
@@ -108,9 +115,9 @@ if page == "🏠 1. Home / Overview":
     with home_tabs[0]:
         st.write("### The Ecological & Economic Crisis")
         st.write("Every post-harvest season, the narrow window for field preparation triggers massive stubble burning across North India. This conventional practice annihilates topsoil nutrients and creates severe atmospheric pollution (PM2.5/PM10), resulting in a public health emergency and economic loss.")
-        col_crisis1, col_crisis2 = st.columns(2)
-        with col_crisis1:
-            render_image("CRISIS.png")
+        col_d1, col_c, col_d2 = st.columns([1, 2, 1])
+        with col_c:
+            render_image("CRISIS.png", "The Ground Reality")
 
     with home_tabs[1]:
         st.write("### The Data-Driven Intervention")
@@ -245,4 +252,3 @@ elif page == "📈 5. Impact Projections":
     col1.metric("Avg Peak AQI", "110", "▼ 75% Reduction", delta_color="normal")
     col2.metric("Soil Carbon Recovery", "18%", "▲ Sustained", delta_color="normal")
     col3.metric("Rural Economy Boost", "₹2,150 Cr", "▲ Generated", delta_color="normal")
-
