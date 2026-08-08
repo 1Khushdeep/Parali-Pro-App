@@ -62,17 +62,17 @@ def get_coordinates(location_name):
     except: pass
     return None, None
 
-# 100% FIXED: EXACT SAME SIZE (450x450) & STRICTLY CENTER ALIGNED USING HTML/CSS
+# FIXED: Removed border/boundary, kept exact size and center alignment
 def render_image(image_name, caption_text=""):
     if os.path.exists(image_name):
         with open(image_name, "rb") as f:
             data = base64.b64encode(f.read()).decode("utf-8")
         
-        # HTML + CSS Flexbox forces absolute Center Alignment and strict Square shape
+        # HTML + CSS Flexbox without border
         html_code = f"""
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; margin-bottom: 20px;">
             <img src="data:image/png;base64,{data}" 
-                 style="width: 450px; height: 450px; object-fit: cover; border-radius: 15px; border: 2px solid #FFD700; box-shadow: 0px 8px 20px rgba(0,0,0,0.6);">
+                 style="width: 450px; height: 450px; object-fit: cover; border-radius: 15px;">
             <div style="color: #00E5FF; font-size: 20px; font-weight: bold; margin-top: 15px; text-align: center;">{caption_text}</div>
         </div>
         """
@@ -103,10 +103,10 @@ if page == "🏠 1. Home / Overview":
     st.markdown('<div class="title-container"><span class="emoji-icon">🌾</span> <span class="gradient-text">Parali-Pro</span></div>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Next-Generation Crop Residue & Energy Optimization Platform</p>', unsafe_allow_html=True)
     
-    # Using columns to visually balance the center-aligned image
+    # Using columns to visually balance the center-aligned image. Removed "Main Dashboard Interface" text.
     col_dummy1, col_center, col_dummy2 = st.columns([1, 2, 1])
     with col_center:
-        render_image("PARALI.png", "Main Dashboard Interface")
+        render_image("PARALI.png")
     
     st.divider()
     
@@ -165,7 +165,7 @@ elif page == "👨‍🌾 2. AI Decision Engine":
                 st.metric(label="Primary Directive", value="In-situ Composting 🌱", delta="Optimizes Soil Nutrition")
 
 # ==========================================
-# PAGE 3: SPATIAL ANALYTICS
+# PAGE 3: SPATIAL Analytics
 # ==========================================
 elif page == "🏛️ 3. Spatial Analytics":
     st.header("🏛️ Regional Density & Spatial Mapping")
