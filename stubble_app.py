@@ -72,7 +72,7 @@ def render_image(image_name, caption_text=""):
         html_code = f"""
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; margin-bottom: 20px;">
             <img src="data:image/png;base64,{data}" 
-                 style="width: 450px; height: 450px; object-fit: cover; border-radius: 15px;">
+                 style="width: 100%; max-width: 450px; height: auto; object-fit: cover; border-radius: 15px;">
             <div style="color: #00E5FF; font-size: 20px; font-weight: bold; margin-top: 15px; text-align: center;">{caption_text}</div>
         </div>
         """
@@ -103,10 +103,11 @@ if page == "🏠 1. Home / Overview":
     st.markdown('<div class="title-container"><span class="emoji-icon">🌾</span> <span class="gradient-text">Parali-Pro</span></div>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Next-Generation Crop Residue & Energy Optimization Platform</p>', unsafe_allow_html=True)
     
-    # Using columns to visually balance the center-aligned image. Removed "Main Dashboard Interface" text.
-    col_dummy1, col_center, col_dummy2 = st.columns([1, 2, 1])
-    with col_center:
-        render_image("PARALI.png")
+    # FIXED: Made the main image full width just like other container images
+    if os.path.exists("PARALI.png"):
+        st.image("PARALI.png", use_container_width=True)
+    else:
+        st.error("⚠️ Missing Image: 'PARALI.png'")
     
     st.divider()
     
